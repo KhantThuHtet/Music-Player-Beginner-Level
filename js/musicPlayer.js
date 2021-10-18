@@ -1,128 +1,133 @@
 let trackContainer = document.querySelector(".trackContainer");
-let audioTag = document.querySelector(".audio-tag");
 let currentAndTotalTime = document.querySelector(".currentAndTotalTime");
-let progressWidth = document.querySelector(".progress");
-let previous = document.querySelector(".previous");
-let play = document.querySelector(".play");
-let pause = document.querySelector(".pause");
-let next = document.querySelector(".next");
-let currentPlayingTrack = 0;
-let isPlaying = false;
+let progress = document.querySelector(".progress");
+let progressBar = document.querySelector('.progressBar');
+let playBtn = document.querySelector(".play");
+let pauseBtn = document.querySelector(".pause");
+let previousBtn = document.querySelector(".previous");
+let nextBtn = document.querySelector(".next");
+let audioTag = document.getElementById("audio-tag");
+let trackNo = 0;
+let currentPlayingIndex = 0;
 
-let trackObj = [
-  { name: "Apologize.mp4", title: "Apologize - Timbaland ft. OneRepublic" },
-  { name: "Bad_liar.mp4", title: "Bad Liar - Imagine Dragons" },
+let trackList = [
   {
-    name: "device.mp4",
-    title: "Device - Phyu Phyu Kyaw Thein - Covered by Ko Htet",
+    name: "./assets/video/Apologize.mp4",
+    title: "Apologize Timbaland - ft. OneRepublic",
   },
-  { name: "last_sunday.mp4", title: "Last Sunday - Unknown artist" },
   {
-    name: "remember.mp4",
+    name: "./assets/video/Bad_Liar.mp4",
+    title: "Bad Liar - Imagine Dragon",
+  },
+  {
+    name: "./assets/video/device.mp4",
+    title: "လှည့်စားလိုက် - Phyu Phyu Kyaw Thein (Cover By Ko Htett)",
+  },
+  {
+    name: "./assets/video/last_sunday.mp4",
+    title: "Last Sunday - Unknown Artist",
+  },
+  {
+    name: "./assets/video/remember.mp4",
     title: "Remember Our Summer - FrogMonster (动态歌词/Lyrics)",
   },
 ];
 
-let trackTag;
-
-for (let i = 1; i <= trackObj.length; i++) {
+trackList.map((el, index) => {
   
-  trackTag = document.createElement("div");
+  trackNo++;
+  let trackTag = document.createElement("div");
   trackTag.classList.add("trackTag");
+  let trackContent = document.createTextNode(`${trackNo}. ` + el.title);
+  trackTag.appendChild(trackContent);
   trackContainer.appendChild(trackTag);
-  trackTag.textContent = i + ". " + trackObj[i - 1].title;
-  let trackName = trackObj[i - 1].name;
+
   trackTag.addEventListener("click", () => {
-    currentPlayingTrack = i - 1;
-    audioTag.src = `./assets/video/${trackName}`;
+    currentPlayingIndex = index;
+    let curretTrackName = el.name;
+    audioTag.src = curretTrackName;
     audioTag.play();
+    isPlaying = true;
+    playPauseBtn(isPlaying);
   });
-}
+  
+});
 
-let durationText = "00:00";
+let trackDuration = "00:00";
 let duration;
-audioTag.addEventListener("loadeddata", () => {
-  duration = audioTag.duration;
-  console.log(duration);
-  durationText = showTime(duration);
+audioTag.addEventListener('loadeddata', ()=>{
+  duration = Math.floor(audioTag.duration);
+  trackDuration = showTime(duration);
 });
+let trackCurrentTime;
 let currentTime;
-audioTag.addEventListener("timeupdate", () => {
-  currentTime = audioTag.currentTime;
-  console.log(Math.floor(currentTime));
-  let currentTimeText = showTime(currentTime);
-  currentAndTotalTime.textContent = durationText + " / " + currentTimeText;
-  progress(duration);
-});
+audioTag.addEventListener('timeupdate', ()=>{
+  currentTime = Math.floor(audioTag.currentTime);
+  trackCurrentTime = showTime(currentTime);
+  currentAndTotalTime.textContent =trackDuration + ' / ' + trackCurrentTime;
+  let progressBarWidth = (500/duration) * currentTime;
+  progress.style.width = progressBarWidth + 'px';
+})
 
-function progress() {
-  progressBarWidth = (500 / duration) * currentTime;
-  progressWidth.style.width = progressBarWidth + "px";
-}
-function showTime(x) {
+const showTime = (x)=>{
   let seconds = Math.floor(x % 60);
   let minutes = Math.floor(x / 60);
+
   let secondsText = seconds < 10 ? "0" + seconds.toString() : seconds;
   let minutesText = minutes < 10 ? "0" + minutes.toString() : minutes;
-  return minutesText + ":" + secondsText;
+  return minutesText + ':' + secondsText;
 }
-play.addEventListener("click", () => {
+
+
+let isPlaying = false;
+playBtn.addEventListener('click', ()=>{
   isPlaying = true;
-  console.log(currentPlayingTrack);
+  
   if (audioTag.currentTime == 0) {
-    console.log(trackObj[currentPlayingTrack]);
-    currentTrackName = trackObj[currentPlayingTrack].name;
-    
-    audioTag.src = `./assets/video/${currentTrackName}`;
+    audioTag.src = trackList[currentPlayingIndex].name;
     audioTag.play();
-    if (isPlaying) {
-      pause.style.display = "inline";
-      play.style.display = "none";
-    }
-  } else {
+  } else{
     audioTag.play();
-    if (isPlaying) {
-      pause.style.display = "inline";
-      play.style.display = "none";
-    }
   }
+  
+  playPauseBtn(isPlaying);
 });
-pause.addEventListener("click", () => {
-  isPlaying = true;
+pauseBtn.addEventListener('click', ()=>{
+  isPlaying = false;
   audioTag.pause();
-  if (isPlaying) {
-    pause.style.display = "none";
-    play.style.display = "inline";
-  }
+  playPauseBtn(isPlaying);
 });
 
-previous.addEventListener("click", () => {
-  console.log(currentPlayingTrack)
-  if (currentPlayingTrack === 0) {
-    return;
-  }
-  currentPlayingTrack -= 1;
-  audioTag.src = `./assets/video/${trackObj[currentPlayingTrack].name}`;
-  console.log(audioTag);
-  audioTag.play();
-  isPlaying = true;
+let playPauseBtn = (isPlaying)=>{
   if (isPlaying) {
-    pause.style.display = "inline";
-    play.style.display = "none";
+    playBtn.style.display = "none";
+    pauseBtn.style.display = "inline";
+  } else {
+    playBtn.style.display = "inline";
+    pauseBtn.style.display = "none";
   }
-});
+}
 
-next.addEventListener("click", () => {
-  if (currentPlayingTrack === trackObj.length-1) {
+
+previousBtn.addEventListener('click', ()=>{
+  if (currentPlayingIndex == 0) {
     return;
   }
-  currentPlayingTrack += 1;
-  audioTag.src = `./assets/video/${trackObj[currentPlayingTrack].name}`;
-  console.log(audioTag.src);
+  currentPlayingIndex -= 1;
+  let songIdToPlay = trackList[currentPlayingIndex].name;
+  audioTag.src = songIdToPlay;
   audioTag.play();
   isPlaying = true;
-  if (isPlaying) {
-    pause.style.display = "inline";
-    play.style.display = "none";
+  playPauseBtn(isPlaying);
+})
+nextBtn.addEventListener('click', ()=>{
+  if (currentPlayingIndex == trackList.length-1) {
+    return;
   }
-});
+  currentPlayingIndex += 1;
+  let songIdToPlay = trackList[currentPlayingIndex].name;
+  audioTag.src = songIdToPlay;
+  audioTag.play();
+  isPlaying = true;
+  playPauseBtn(isPlaying);
+})
