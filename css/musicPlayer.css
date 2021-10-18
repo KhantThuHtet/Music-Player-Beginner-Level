@@ -1,0 +1,68 @@
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+:root {
+  --primary: #27bb65;
+  --secondary: #208a4c9c;
+  --text-color: #BCC1C7;
+}
+body {
+  background-color: #161f26;
+  font-family: "Open Sans", sans-serif;
+  color: var(--text-color);
+}
+.container {
+  height: 100vh;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  padding-top: 230px;
+}
+
+.trackTag{
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--primary);
+}
+.audioControlBox{
+    margin-top: 65px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}
+.currentAndTotalTime{
+    margin-bottom: 5px;
+}
+.progressBar{
+    width: 500px;
+    background-color: var(--secondary);
+    height: 5px;
+    border-radius: 5px;
+}
+.progress{
+    height: 5px;
+    border-radius: 5px;
+    width: 0px;
+    background-color: var(--primary);
+    position: relative;
+}
+.controlBtnBox{
+    margin-top: 15px;
+}
+.control{
+    color: var(--primary);
+    fill: var(--primary);
+    cursor: pointer;
+    
+}
+.play{
+    margin: 0 35px;
+}
+.pause{
+    margin: 0 35px;
+    display: none;
+}
